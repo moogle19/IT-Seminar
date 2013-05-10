@@ -3,6 +3,7 @@
 \usepackage{ngerman}
 \usepackage{setspace}
 \usepackage{geometry}
+\usepackage{cite}
 \geometry{a4paper, top=25mm, left=25mm, right=25mm, bottom=25mm}
 
 \title{Seminar IT-Sicherheit}
@@ -13,36 +14,76 @@
 \begin{center}
 \vspace*{1.5cm}
 \begin{Large}
-\texbf{Universität Osnabrück}
+\textbf{Universität Osnabrück}
 \end{Large}
 
 \noindent\hrulefill
-\\[1.5cm]
+\\[3.5cm]
 SEMINARARBEIT \\[1cm]
 zum Seminar \\[1cm]
-\textbf{IT-Sicherheit} \\[1cm]
+\textbf{IT-Sicherheit} \\[1.5cm]
 im Sommersemester 2013 \\[1.5cm]
-Thema: \\[1cm]
+Thema: \\[0.5cm]
 \textbf{IPv6 Privacy Extensions} \\[2cm]
+Erstellt am 10.05.2013
 \end{center}
-
+\vfill
 \begin{flushleft}
-Vorgelegt von: \hfill 
-parbox{Kevin Seidel \\ 943147 \\ Falkenstraße 43 \\ 49124 Georgsmarienhütte}
+Vorgelegt von: 
+\hfill \parbox{46mm}{Kevin Seidel} \\
+\hfill \parbox{46mm}{943147} \\
+\hfill \parbox{46mm}{Falkenstraße 43} \\
+\hfill \parbox{46mm}{49124 Georgsmarienhütte}
 \end{flushleft}
 \end{titlepage}
 
 \newpage
 
 \pagenumbering{Roman}
-\stcounter{page}{2}
-\tableofconetents
+\setcounter{page}{2}
+\tableofcontents
 
 \newpage
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
 \section{Einleitung}
+Diese Arbeit beschäftigt sich mit dem Nutzen und der Funktionsweise der Privacy Extensions im Internet Protocol Version 6.
 
+\newpage
+
+\section{Das Internet Protocol Version 6}
+\subsection{Warum IPv6?}
+
+\subsection{Aufbau einer IPv6-Adresse}
+Die IPv6-Adresse unterscheiden sich deutlich von den bisher verwendeten IPv4-Adressen. IPv4-Adressen haben eine Größe von 32 Bits und werden meist in der ''dotted decimal notation'', das heißt in vier Blöcken von Zahlen zwischen 0 und 255 separiert durch Punkte. Dadurch lassen sich $2^{32}$ (ca. 4,3 Mrd.) verschiedene Adressen darstellen.
+Durch die Verwendung von IPv6-Adressen erhöht sich die Anzahl der Adressen drastisch, da man hier eine Adresslänge von 128 Bits verwendet. Dadurch ergibt sich ein Adressraum der Größe $2^{128}$. Da eine Darstellung in ''dotted decimal notation'' aus 16 Blöcken bestehen würde, entschloss man sich dazu die IPv6-Adressen in 8 Blöcken zu je 4 Hexadezimalziffern zusammenzufassen. Diese Blöcke werden, durch einen Doppelpunkt getrennt, notiert.
+
+
+\begin{figure}[h]
+	\centering
+	$xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx$
+	\caption{Aufbau einer IPv6-Adresse.}
+\end{figure}
+
+
+Diese IPv6-Adresse besteht aus zwei, 64 Bit großen, Teilen, einem Präfix und einem Interface Identifier. Der Präfix bestimmt dabei das Netzwerk in welchem man sich befindet und wird daher meist von einem Router vorgegeben. 
+Der Interface Identifier ist ein eindeutiger Wert, welcher das Gerät im Netzwerk repräsentiert. Der Interface Identifier wird dabei standardmäßig aus der Media Access Control (MAC) - Adresse des Gerätes gebildet.
+
+
+\newpage
+
+\section{Fazit}
+\newpage
+
+\section{Quellen}
+RFC 5952
+RFC 3513
+RFC 4941
+RFC 4291
+\bibliography{rfc,sources}{}
+
+\bibliographystyle{amsalpha}
+\end{document}
 
 \end{document}
