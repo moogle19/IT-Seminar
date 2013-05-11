@@ -56,22 +56,46 @@ Diese Arbeit beschäftigt sich mit dem Nutzen und der Funktionsweise der Privacy
 \subsection{Warum IPv6?}
 
 \subsection{Aufbau einer IPv6-Adresse}
-Die IPv6-Adresse unterscheiden sich deutlich von den bisher verwendeten IPv4-Adressen. IPv4-Adressen haben eine Größe von 32 Bits und werden meist in der ''dotted decimal notation'', das heißt in vier Blöcken von Zahlen zwischen 0 und 255 separiert durch Punkte. Dadurch lassen sich $2^{32}$ (ca. 4,3 Mrd.) verschiedene Adressen darstellen.
-Durch die Verwendung von IPv6-Adressen erhöht sich die Anzahl der Adressen drastisch, da man hier eine Adresslänge von 128 Bits verwendet. Dadurch ergibt sich ein Adressraum der Größe $2^{128}$. Da eine Darstellung in ''dotted decimal notation'' aus 16 Blöcken bestehen würde, entschloss man sich dazu die IPv6-Adressen in 8 Blöcken zu je 4 Hexadezimalziffern zusammenzufassen. Diese Blöcke werden, durch einen Doppelpunkt getrennt, notiert.
+Die IPv6-Adresse unterscheiden sich deutlich von den bisher verwendeten IPv4-Adressen. IPv4-Adressen haben eine Größe von 32 Bits und werden meist in der ''dotted decimal notation'', das heißt in vier Blöcken von Dezimalzahlen zwischen 0 und 255, welche durch einen Punkt separiert werden, dargestellt. Dadurch lassen sich $2^{32}$ (ca. 4,3 Mrd.) verschiedene Adressen darstellen.
+Durch die Verwendung von IPv6-Adressen erhöht sich die Anzahl der Adressen drastisch, da man hier eine Adresslänge von 128 Bits verwendet, womit die Größe des Adressraumes auf $2^{128}$ angehoben wird. Da eine Darstellung dieser Adressen in ''dotted decimal notation'' aus 16 Blöcken bestehen würde und damit sehr schwer zu lesen wäre, entschloss man sich dazu die IPv6-Adressen in 8 Blöcken zu je 4 Hexadezimalziffern zusammenzufassen. Diese Blöcke werden, durch einen Doppelpunkt getrennt, notiert.
 
 
 \begin{figure}[h]
 	\centering
-	$xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx$
-	\caption{Aufbau einer IPv6-Adresse.}
+	$2001:0db8:1aAa:0000:CCcc:0000:0000:0D01$
+	\caption{Beispiel einer IPv6-Adresse.}
 \end{figure}
 
 
-Diese IPv6-Adresse besteht aus zwei, 64 Bit großen, Teilen, einem Präfix und einem Interface Identifier. Der Präfix bestimmt dabei das Netzwerk in welchem man sich befindet und wird daher meist von einem Router vorgegeben. 
-Der Interface Identifier ist ein eindeutiger Wert, welcher das Gerät im Netzwerk repräsentiert. Der Interface Identifier wird dabei standardmäßig aus der Media Access Control (MAC) - Adresse des Gerätes gebildet.
+Da diese Adressen im Vergleich zu IPv4-Adressen immernoch relativ lang und unübersichtlich sind, gibt es mehrere Möglichkeiten eine IPv6-Adresse zu verkürzen.
+So wird in \cite{rfc4291} vereinbart, dass man ein oder mehrere aufeinanderfolgende Blöcke, welche nur Nullen beinhalten durch ''::'' verkürzen kann. Dies jedoch nur einmal pro Adresse.
+Ausserdem ist es möglich auf führende Nullen innerhalb eines Blockes zu verzichten. \\
 
 
+In \cite{rfc5952} wird eine Empfehlung für eine etwas striktere Darstellung von IPv6-Adressen gemacht.
+So ist es dort vorgeschrieben innerhalb von Adressen nur Kleinbuchstaben zu verwenden. Dies dient der besseren Lesbarkeit und verhindert eine versehentliche Verwechselung von $8$ und $B$ sowie $0$ und $D$, die bei gemischter Groß- und Kleinschreibung oder durchgängiger Großschreibung entstehen könnte.
+
+Des Weiteren müssen führende Null innerhalb eines Blockes ausgelassen werden und Blöcke, welche nur aus Nullen bestehen durch eine einzelne Null repräsentiert werden.
+
+Ausserdem ist es nun nicht mehr erlaubt einzelne Null-Felder durch ''::'' zu repräsentieren. Diese Schreibweise ist nurnoch auf mehrere aufeinanderfolgende Null-Felder anwendbar und muss in dem Fall auch genutzt werden. Gibt es mehrer Möglichkeiten Felder durch ''::'' zu verkürzen, muss das mit dem größten Nutzen, das heißt mit den meisten aufeinanderfolgenden Nullen, gewählt werden. Gibt es mehrere gleichgroße Möglichkeiten, ist die erste zu wählen.
+
+
+\begin{figure}[h]
+	\centering
+	$2001:db8:1aaa:0:cccc::d01$
+	\caption{Beispieladresse aus Abb. 1 in verkürzter Form}
+\end{figure}
+
+Durch die Befolgung dieser Regeln zu Darstellung von IPv6-Adressen in Textform hat sich die Lesbarkeit stark verbessert.
+
+Im Allgemeinen besteht eine IPv6-Adresse aus zwei Teilen. Die ersten 64 Bits der Adresse werden Präfix genannt und dienen zur Identifizierung des Netzes, in dem sich das Gerät befindet. 
+Die zweiten 64 Bits werden Interface Identifier genannt und dienen dazu ein Netzwerkgerät genau zu identifizieren. Der Interface Identifier muss für jedes Gerät im Netzwerk eindeutig sein.
 \newpage
+\subsection{Vergabe von IPv6-Adressen}
+Bei der Erzeugung von IPv6-Adressen gibt es mehrere Möglichkeiten. Die erste und simpelste Möglichkeit ist eine Vergabe der Adresse von Hand. Einfach für den Benutzer ist jedoch die automatische Zuweisung einer Adresse. Zum einen gibt es da die Möglichkeit eine Link locale-Adresse zu erzeugen. Dies geschieht, falls kein Router im Netz ist. Diese Link locale Adresse beginnt immer mit fe80:: und daran wird der Interface Identifier angehängt. Eine weitere Möglichkeit ist, die Adressen von einem Dynamic Host Configuration Protocol(DHCP)-Server vergeben zulassen. Die funktioniert ähnlich dem DHCPv4 und weißt jedem neuen Gerät im Netzwerk dynamisch eine Adresse zu, sobald es sich im Netzwerk anmeldet.
+Die letzte Möglickeit eine IPv6-Adresse zu bekommen, ist die Erzeugung der Adresse mittels Stateless Address Autoconfiguration, welche nun etwas genauer beleuchtet wird.
+\subsubsection{Erzeugung von Adressen mittels Stateless Address Autoconfiguration}
+Das Ziel der Stateless Address Autoconfiguration ist es Netzwerke ohne großen Konfigurationsaufwand seitens der Clients zu erstellen. So ist eines der Designziele laut dem \cite{rfc4862} , dass es keine manuellen Konfiguration bedarf, um ein Gerät an ein vorhandenes Netzwerk anzuschließen.
 
 \section{Fazit}
 \newpage
