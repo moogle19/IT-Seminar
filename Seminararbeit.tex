@@ -54,6 +54,13 @@ Diese Arbeit beschäftigt sich mit dem Nutzen und der Funktionsweise der Privacy
 
 \section{Das Internet Protocol Version 6}
 \subsection{Warum IPv6?}
+Durch den starken Anstieg von Netzwerkgeräten in den vergangen Jahren, ist es nötig geworden, einen größeren Adressraum zu schaffen.
+Das Internet Protocol (IP) Version 4 stellt, aufgrund der Adressgröße von 32 Bits, nur einen Adressraum von $2^{32}$ Adressen zur Verfügung, was in etwa 4,3Mrd. Adressen entspricht. Da diese jedoch mittlerweile alle vergeben sind, ist es notwendig geworden einen größeren Adressraum zu schaffen.
+
+
+IP Version 6 setzt deshalb auf eine Adresslänge von 128 Bits, wodurch sich der Adressraum enorm vergrößert (etwa $3.4*10^{38}$ Adressen). 
+
+Eine weitere Veränderung von IP Version 6(IPv6) gegenüber IP Version 4 (IPv4) ist ein Header mit festgelegter Größe, welcher die zwingend notwendigen Informationen enthält. Für zusätzliche Informationen gibt es einen Extention Header, welcher jedoch nur bei Bedarf genutzt wird.
 
 \subsection{Aufbau einer IPv6-Adresse}
 Die IPv6-Adresse unterscheiden sich deutlich von den bisher verwendeten IPv4-Adressen. IPv4-Adressen haben eine Größe von 32 Bits und werden meist in der ''dotted decimal notation'', das heißt in vier Blöcken von Dezimalzahlen zwischen 0 und 255, welche durch einen Punkt separiert werden, dargestellt. Dadurch lassen sich $2^{32}$ (ca. 4,3 Mrd.) verschiedene Adressen darstellen.
@@ -83,20 +90,65 @@ Ausserdem ist es nun nicht mehr erlaubt einzelne Null-Felder durch ''::'' zu rep
 \begin{figure}[h]
 	\centering
 	$2001:db8:1aaa:0:cccc::d01$
-	\caption{Beispieladresse aus Abb. 1 in verkürzter Form}
+	\caption{Beispieladresse aus Abb. 1 unter Berücksichtigung der Empfehlung}
 \end{figure}
 
 Durch die Befolgung dieser Regeln zu Darstellung von IPv6-Adressen in Textform hat sich die Lesbarkeit stark verbessert.
 
-Im Allgemeinen besteht eine IPv6-Adresse aus zwei Teilen. Die ersten 64 Bits der Adresse werden Präfix genannt und dienen zur Identifizierung des Netzes, in dem sich das Gerät befindet. 
-Die zweiten 64 Bits werden Interface Identifier genannt und dienen dazu ein Netzwerkgerät genau zu identifizieren. Der Interface Identifier muss für jedes Gerät im Netzwerk eindeutig sein.
-\newpage
-\subsection{Vergabe von IPv6-Adressen}
-Bei der Erzeugung von IPv6-Adressen gibt es mehrere Möglichkeiten. Die erste und simpelste Möglichkeit ist eine Vergabe der Adresse von Hand. Einfach für den Benutzer ist jedoch die automatische Zuweisung einer Adresse. Zum einen gibt es da die Möglichkeit eine Link locale-Adresse zu erzeugen. Dies geschieht, falls kein Router im Netz ist. Diese Link locale Adresse beginnt immer mit fe80:: und daran wird der Interface Identifier angehängt. Eine weitere Möglichkeit ist, die Adressen von einem Dynamic Host Configuration Protocol(DHCP)-Server vergeben zulassen. Die funktioniert ähnlich dem DHCPv4 und weißt jedem neuen Gerät im Netzwerk dynamisch eine Adresse zu, sobald es sich im Netzwerk anmeldet.
-Die letzte Möglickeit eine IPv6-Adresse zu bekommen, ist die Erzeugung der Adresse mittels Stateless Address Autoconfiguration, welche nun etwas genauer beleuchtet wird.
-\subsubsection{Erzeugung von Adressen mittels Stateless Address Autoconfiguration}
-Das Ziel der Stateless Address Autoconfiguration ist es Netzwerke ohne großen Konfigurationsaufwand seitens der Clients zu erstellen. So ist eines der Designziele laut dem \cite{rfc4862} , dass es keine manuellen Konfiguration bedarf, um ein Gerät an ein vorhandenes Netzwerk anzuschließen.
+Die Netzmasken werden bei IPv6 durch Suffixe dargestellt, das heißt die Anzahl der Einsbits in der Netzmaske wird, abgetrennt durch einen Schrägstrich, hinten an die Adresse angehangen.
 
+\begin{figure}[h]
+	\centering
+	$2001:db8:1aaa:0:cccc::d01/64$
+	\caption{Beispieladresse aus Abb. 2 mit Netzmaske}
+\end{figure}
+
+Durch diese Netzmaske wird angegeben, welcher Teil der Adresse das Netzwerk identifiziert und welcher Teil das Interface repräsentiert. Der vordere Teil der Adresse, auch Präfix genannt, dient dabei zur Bestimmung des Netzes.
+Der hintere Teil, Interface Identifier genannt, dient zur Indentifizierung eines Gerätes im Netz.
+Beim Beispiel in Abbildung 3 wäre der Präfix 2001:db8:1aaa:0::/64 und der Interface Identifier ::cccc:0:0:d01/64.
+
+\subsection{Vergabe von IPv6-Adressen}
+Bei der Vergabe von IPv6-Adressen in einem Netzwerk gibt es mehrere Vorgehensweisen. Zum einen die manuelle Vergabe von Adressen, was in kleinen Netzen schnell und einfach funktioniert, bei größeren Netzen jedoch einen enormen Aufwand bedeutet. 
+Eine Alternative für größere Netze wäre die Verwendung des Dynamic Host Configuration Protocols (DHCP), welche schon für IPv4 existiert. Für IPv6 gibt es eine angepasste Version mit dem Namen DHCPv6, welches, identisch zum klassischen DHCP, dynamisch Adressen an m Netzwerk befindliche Interfaces verteilt und die Adressen auf dem DHCP-Server speichert. Durch die Speicherung der Adressen handelt es sich um eine Stateful Address Configuration im Gegensatz zur letzten Möglichkeit, der Stateless Address Autoconfiguration. 
+Diese erzeugt IPv6-Adressen direkt auf dem Gerät, welches diese später verwendet. Die Funktionsweise wird im Folgenden näher erörtert.
+
+\newpage
+
+\section{Stateless Address Autoconfiguration}
+Die Stateless Address Autoconfiguration(SLAAC) ist ein Verfahren zur eigenständigen Erzeugung von IP-Adressen von Netzwerkgeräten.
+Dies ermöglicht eine einfache und konfigurationslose Einrichtung von Netzwerken, da zum Beispiel auf manuelle Adressvergabe oder den Einsatz von Dynamic Host Configuration Protocol(DHCP)-Servern verzichtet werden kann.
+Selbst bei mehreren verbundenen Netzwerken ist ein DHCP-Server nicht nötig, da mittels Router Advertisement die einzelnen Adressen für die Subnetze vergeben werden können.
+
+\subsection{Funktionsweise der Stateless Address Autoconfiguration}
+Für die Erzeugung einer globalen IPv6-Adresse sind mehrere Schritt nötig, welche im folgenden genauer erörtert werden.
+Der Autokonfigurationsprozess wird mit der Aktivierung des Netzwerkgerätes gestartet.
+Dazu wird zuerst eine link-local Adresse erstellt. Diese erlaubt grundlegende Kommunikation im Netzwerk.
+Sie  setzt sich aus einem festgelegtem Präfix (fe80::/64) und dem gerätespezfischen Interface Identifier zusammen.
+Die Interface Identifier wird in der Regel aus der Media Access Control(MAC)-Adresse des Netzwerkgerätes gebildet.
+Um diese 48 Bits lange MAC-Adresse auf die für den Interface Identifier vorgesehene Länge von 64 Bits zu bringen, wird die MAC-Adresse in der Mitte geteilt und dort wird der Wert ''FF:FE'' eingesetzt. Ausserdem wird das siebte Bit von links invertiert, welche angibt, ob die MAC-Adresse global oder lokal administriert wird.
+
+Bevor diese vorläufige Adresse, egal ob manuell zugewiesen oder durch DHCP oder SLAAC, an ein Interface gebunden wird, muss deren Eindeutigkeit im Netzwerk überprüft werden. Die geschieht mittels Duplicate Address Detection.
+Einzige Ausnahmen eine Duplicate Address Detection sind Anycast Adressen oder explizite Deaktiverierung des Vorgangs.
+Zur Überprüfung der Eindeutigkeit von Adresse werden sogenannte Neighbor Solicitations und Neighbor Advertisements verwendet. Neighbor Solicitations haben als Empfänger unsere generierte vorläufige Adresse und als Sender die nicht spezifizierte Adresse.
+Um eine Antwort auf diese Nachricht zu erhalten ist es noch nötig, dass das Interface zunächst dem all-nodes Multicast, welcher einem Broadcast in IPv4 entspricht und an alle angebundenen Adressen verschickt, und dem solicited-node Multicast, welcher speziell für die Duplicate Address Detection zuständig ist, beitreten.
+Falls nun schon ein Interface diese vorläufige Adresse besitzt, erhält es die Neighbor Solicitation und antwortet mit einem Neighbor Advertisement. 
+Unser Interface empfängt dieses Neighbor Advertisement, wodurch es weiß, dass die vorläufige Adresse nicht eindeutig ist und damit nicht an das Gerät gebunden werden kann.
+
+Falls das Interface während der Duplicate Address Detection eine Neighbor Solicitation von einem anderen Gerät erhält, versuchen zwei Geräte gleichzeitig die gleiche Adresse zu verwenden. In diesem Fall sollte keines der Geräte seine vorläufige Adresse an das Gerät binden. Es kann jedoch auch vorkommen, dass die Neighbor Solicitation von unserem Gerät kommt, falls der Multicast die Packete auch an den Sender zurückschickt.
+
+Wenn die Duplicate Address Detection fehlschlägt und unser Interface Indentifier aus der Hardware-Adresse gebildet wurde, sollten alle IP Operationen eingestellt werden.
+
+Nachdem die link-local Adresse gebildet wurde, ist es nun möglich eine globale Adresse zu generieren. Dies geht jedoch nur, falls sich ein Router im Netzwerk befindet, da hierfür sogenannte Router Advertisements nötig sind. Die Router Advertisements enthalten Informationen über das Netzwerk, wie zum Beispiel den zu verwendenden Präfix.
+Sie werden vom Router automatisch in periodischen Abständen geschickt, können jedoch auch durch Router Solification angefragt werden.
+
+Ein Gerät sendet also zuerst eine Router Solification und wartet auf ein Router Advertisement als Antwort. Nach einem vorgegebenen Zeitraum ohne Antwort wird dies nocheinmal ausgeführt. Dies geschieht so lange bis ein Router antwortet oder die vorgegebene Maximalanzahl von Anfragen erreicht ist. 
+Antwortet der Router, wird aus dem in dem Router Advertisement enthaltenen Präfix und dem vom Gerät vorher gebildeteten Interface Identifier eine globale Adresse gebildet.
+
+
+
+\newpage
+\subsection{Probleme von Stateless Address Autoconfiguration}
+Durch die Erzeugung des Interface Identifiers aus der MAC-Adresse ist dieser eindeutig und statisch. Das führt dazu, dass man ihn sehr einfach zurückverfolgen kann. 
 \section{Fazit}
 \newpage
 
@@ -105,6 +157,7 @@ RFC 5952
 RFC 3513
 RFC 4941
 RFC 4291
+https://supportforums.cisco.com/docs/DOC-24485
 \bibliography{rfc,sources}{}
 
 \bibliographystyle{amsalpha}

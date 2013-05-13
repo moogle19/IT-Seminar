@@ -1,0 +1,19 @@
+Einleitung
+
+Warum IPv6?
+
+Aufbau einer IPv6-Adresse
+	Unterschiede zu IPv4
+
+Stateless Address Autoconfiguration
+	Vorteile Nachteile Nutzen
+	Funktionsweise
+
+Privacy Extentions
+	Notwendigkeit
+	Vorteile
+	Schwächen
+	Verbesserungsvorschläge
+
+Fazit
+
