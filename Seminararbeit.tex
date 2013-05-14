@@ -96,6 +96,8 @@ Ausserdem ist es nun nicht mehr erlaubt einzelne Null-Felder durch ''::'' zu rep
 Durch die Befolgung dieser Regeln zu Darstellung von IPv6-Adressen in Textform hat sich die Lesbarkeit stark verbessert.
 
 Die Netzmasken werden bei IPv6 durch Suffixe dargestellt, das heißt die Anzahl der Einsbits in der Netzmaske wird, abgetrennt durch einen Schrägstrich, hinten an die Adresse angehangen.
+Eine Notation der Netzmaske als Adresse, wie in IPv4 üblich, ist nun nichtmehr möglich.
+
 
 \begin{figure}[h]
 	\centering
@@ -107,10 +109,12 @@ Durch diese Netzmaske wird angegeben, welcher Teil der Adresse das Netzwerk iden
 Der hintere Teil, Interface Identifier genannt, dient zur Indentifizierung eines Gerätes im Netz.
 Beim Beispiel in Abbildung 3 wäre der Präfix 2001:db8:1aaa:0::/64 und der Interface Identifier ::cccc:0:0:d01/64.
 
+
 \subsection{Vergabe von IPv6-Adressen}
 Bei der Vergabe von IPv6-Adressen in einem Netzwerk gibt es mehrere Vorgehensweisen. Zum einen die manuelle Vergabe von Adressen, was in kleinen Netzen schnell und einfach funktioniert, bei größeren Netzen jedoch einen enormen Aufwand bedeutet. 
 Eine Alternative für größere Netze wäre die Verwendung des Dynamic Host Configuration Protocols (DHCP), welche schon für IPv4 existiert. Für IPv6 gibt es eine angepasste Version mit dem Namen DHCPv6, welches, identisch zum klassischen DHCP, dynamisch Adressen an m Netzwerk befindliche Interfaces verteilt und die Adressen auf dem DHCP-Server speichert. Durch die Speicherung der Adressen handelt es sich um eine Stateful Address Configuration im Gegensatz zur letzten Möglichkeit, der Stateless Address Autoconfiguration. 
 Diese erzeugt IPv6-Adressen direkt auf dem Gerät, welches diese später verwendet. Die Funktionsweise wird im Folgenden näher erörtert.
+
 
 \newpage
 
@@ -118,6 +122,7 @@ Diese erzeugt IPv6-Adressen direkt auf dem Gerät, welches diese später verwend
 Die Stateless Address Autoconfiguration(SLAAC) ist ein Verfahren zur eigenständigen Erzeugung von IP-Adressen von Netzwerkgeräten.
 Dies ermöglicht eine einfache und konfigurationslose Einrichtung von Netzwerken, da zum Beispiel auf manuelle Adressvergabe oder den Einsatz von Dynamic Host Configuration Protocol(DHCP)-Servern verzichtet werden kann.
 Selbst bei mehreren verbundenen Netzwerken ist ein DHCP-Server nicht nötig, da mittels Router Advertisement die einzelnen Adressen für die Subnetze vergeben werden können.
+
 
 \subsection{Funktionsweise der Stateless Address Autoconfiguration}
 Für die Erzeugung einer globalen IPv6-Adresse sind mehrere Schritt nötig, welche im folgenden genauer erörtert werden.
