@@ -152,8 +152,15 @@ Antwortet der Router, wird aus dem in dem Router Advertisement enthaltenen Präf
 
 
 \newpage
-\subsection{Probleme von Stateless Address Autoconfiguration}
-Durch die Erzeugung des Interface Identifiers aus der MAC-Adresse ist dieser eindeutig und statisch. Das führt dazu, dass man ihn sehr einfach zurückverfolgen kann. 
+\subsection{Probleme der Stateless Address Autoconfiguration}
+Ein Problem bei der Stateless Address Autoconfiguration entsteht aus der Generierung des Interface Identifiers durch die MAC-Adresse. Die Methode hat zwar den Vorteil, dass das Gerät schnell und einfach einen eindeutigen Interface Identifier erhält, aber den Nachteil, dass dieser immer gleich bleibt.
+Durch diesen statischen Interface Identifier ist es nun für Angreifer möglich ein spezifisches Gerät genau anzugreifen, da er anhand der MAC-Adresse Informationen über den Netzwerkadapter und vielleicht sogar die Hardware und Software dahinter herausfinden kann. So ist es zum Beispiel möglich über die MAC-Adresse Apple-Geräte zu bestimmen und so einen gezielten Angriff auf das Betriebssystem durchzuführen.
+Ein weiteres Problem, welches durch den gleichbleibenden Interface Identifier entsteht, ist die daraus mögliche Ortung und Erstellung von Bewegungsprofilen. So kann man mit Hilfe von Netzwerklogs sehenn, wann und wie lange ein bestimmtes Gerät und damit eine dazugehörige Person, an einem Ort war.
+
+\section{IPv6 Privacy Extensions}
+Durch den Einsatz der IPv6 Privacy Extensions sollen die voher beschriebenen Probleme der Stateless Address Autoconfiguration gelöst werden.
+Dies geschieht dadurch, dass der Interface Identifier nicht über die gesamte Lebensdauer des Gerätes gleich bleibt, sonder dynamisch ist.
+
 \section{Fazit}
 \newpage
 
