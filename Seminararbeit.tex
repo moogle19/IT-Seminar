@@ -153,13 +153,71 @@ Antwortet der Router, wird aus dem in dem Router Advertisement enthaltenen Präf
 
 \newpage
 \subsection{Probleme der Stateless Address Autoconfiguration}
-Ein Problem bei der Stateless Address Autoconfiguration entsteht aus der Generierung des Interface Identifiers durch die MAC-Adresse. Die Methode hat zwar den Vorteil, dass das Gerät schnell und einfach einen eindeutigen Interface Identifier erhält, aber den Nachteil, dass dieser immer gleich bleibt.
-Durch diesen statischen Interface Identifier ist es nun für Angreifer möglich ein spezifisches Gerät genau anzugreifen, da er anhand der MAC-Adresse Informationen über den Netzwerkadapter und vielleicht sogar die Hardware und Software dahinter herausfinden kann. So ist es zum Beispiel möglich über die MAC-Adresse Apple-Geräte zu bestimmen und so einen gezielten Angriff auf das Betriebssystem durchzuführen.
-Ein weiteres Problem, welches durch den gleichbleibenden Interface Identifier entsteht, ist die daraus mögliche Ortung und Erstellung von Bewegungsprofilen. So kann man mit Hilfe von Netzwerklogs sehenn, wann und wie lange ein bestimmtes Gerät und damit eine dazugehörige Person, an einem Ort war.
+Ein Problem bei der Stateles Address Autoconfiguration entsteht durch die Verwendung eines konstanten Interface Identifiers für die IP-Adresse. 
+Da der Interface Identifier in den meisten Fällen aus der MAC-Adresse generiert wird, bleibt dieser selbst bei einem Wechsel des Netzwerkes konstant und lässt sich somit dauerhaft einem Gerät zuordnen.
+Das heißt, selbst wenn der Präfix der IPv6-Adresse wechselt, lässt sich das Gerät, und damit meist auch der Nutzer, über den Interface Identifier mit sehr großer Trefferwahrscheinlichkeit zurückverfolgen.
+So lässt sich beispielsweise mittels eines Netzwerksniffers bestimmen, wann ein Gerät kommuniziert hat, mit wem es kommuniziert hat und ,durch den Präfix der IPv6-Adresse, in welchem Netz es sich befand.
+Besonders problematisch ist dies bei mobilen Geräten, wie zum Beispiel Smartphones oder Laptops, welche oft ihren Standort ändern.
+So können deren Bewegungen sehr leicht verfolgt werden, da sich zwar der Präfix der Adresse bei einem Netzwechsel ändert, der Interface Identifier jedoch konstant bleibt. 
+
+Ein weiters Problem was bei der Nutzung von MAC-Adressen als Interface Identifier entsteht, ist die dadurch entstehende Möglichkeit, die Hardware des Gerätes zu bestimmen. Da die MAC-Adressen eindeutige Herstellerkennungen enthalten, lässt sich die darunterliegende Hardware leichter bestimmen und dadurch gezielt angreifen. So kann man beispielsweise anhand der MAC-Adresse Apple Geräte erkennen und in Folge dessen gezielt angreifen.
+
+Ein Ansatz zur Lösung des Problems geben die Privacy Extentions für IPv6.
+
 
 \section{IPv6 Privacy Extensions}
 Durch den Einsatz der IPv6 Privacy Extensions sollen die voher beschriebenen Probleme der Stateless Address Autoconfiguration gelöst werden.
-Dies geschieht dadurch, dass der Interface Identifier nicht über die gesamte Lebensdauer des Gerätes gleich bleibt, sonder dynamisch ist.
+Dies geschieht dadurch, dass der Interface Identifier nicht mehr nur aus der bearbeiteten MAC-Adresse besteht, und damit über die gesamte Lebensdauer des Gerätes gleich bleibt, sonder dynamisch erzeugt wird.
+Dadurch wird eine Zuordnung von einer IPv6-Adresse zu einem bestimmten Gerät nahezu unmöglich und die vorher beschriebenen Probleme mit der Privatsphäre werden gelöst.
+
+
+Da durch die Privacy Extentions jedoch nur der Interface Identifier geändert wird, ist die Gefahr einer konstanten Zuordnung einer Adresse zu einem Gerät nicht komplett gelöst.
+Jedes Netzwerk bekommt seinen eigenen Präfix, welcher ebenfalls konstant sein kann. So lässt sich bei kleinen Netzwerken, bestehend aus wenigen oder sogar nur einem Gerät, eine relativ genaue Zuordnung der Adresse zu einem Gerät machen und das obwohl der Interface Identifier ständig wechselt.
+Bei Adressen, welche über einen Domain Name System(DNS) - Namen verfügen, ist eine Verwendung der Privacy Extentions ebenfalls nutzlos, falls auch der DNS-Name gleich bleibt.
+Da über den DNS-Namen eine eindeutige Zuordnung möglich ist, hat der wechselnde Interface Identifier keinerlei Vorteile.
+Es gibt jedoch auch Geräte, welche sowohl als Client, als auch als Server aggieren. 
+Hier ist es möglich dem Gerät zwei IPv6-Adressen zuzuweisen. So kann die Serveradresse im DNS eingetragen sein und ist dadurch öffentlich erreichbar. Der Client hingegen bekommt eine private IPv6-Adresse, auf welche die Privacy Extentions angewand werden. Dabei muss jedoch gegeben sein, dass man keinerlei Zusammenhang zwischen den beiden Adressen herstellen kann. Es ist daher nötig bei der Generierung eine Zufallsvariable mit einzubeziehen, um dies zu verhindern.
+
+
+
+
+\subsection{Einsatz der Privacy Extentions}
+Das Ziel der Privacy Extensions ist es, bei erhöhter Sicherheit und Privatsphäre, die gleiche einfache Handhabung und automatische Adressegenerierung wie bei der Stateless Address Autoconfiguration zu erhalten.
+Es soll somit ermöglicht werden, aus dem zufällig erstellten Identface Identifier verschiedene Adressen, mit unserschiedlichen Präfixen, zu erstellen.
+Eine andere Möglichkeit ist die Generierung eines spezifischen Interface Identifiers für jeden Präfix, um die keinen Zusammenhang zwischen den einzelnen Adressen zu erstellen.
+Dies führt jedoch möglicherweise zu einer Performancereduzierung.
+Aus diesem zufälligen Interface Identifier sollen sich zudem keine zukünftigen oder vergangenen Interface Identifier ableiten oder berechnen können.
+
+
+\subsection{Generierung des zufälligen Interface Identifiers}
+Bei der Generierung des randomisierten Interface Identifiers gibt es zwei verschiedene Vorgehensweisen.
+Die erste Vorgehensweise setzt einen persistenten Speicher für die Erzeugung des Interface Identifiers vorraus.
+Diese Variante verzichtet auf die Generierung eine Zufallszahl bei der Erzeugung eines neuen Interface Identifiers.
+Hier muss nur bei erster Inbetriebnahme eine Zufallszahl generiert werden.
+
+Die zweite Methode wird bei nicht vorhandenem Speicher eingesetzt. Dort ist es nötig bei jeder neuen Erzeugung eines Interface Identifiers, auch eine neune Zufallszahl generieren.
+
+Bei einem Gerät welche nach der ersten Methode vorgeht und somit über persistenten Speicher verfügt, generiert bei der ersten Inbetriebnahme eine 64 Bit Zufallszahl. 
+Diese sollte von hoher Qualität und damit schwer zu erraten sein. 
+Bei dieser Methodik muss immer ein 64 Bit history value vorhanden sein. Dieses wird entweder, wie oben beschrieben, bei Erst-Start generiert oder wurde aus der vorherigen Erzeugung eines Interface Identifiers gespeichert.
+
+Der eigentliche Vorgang der Erzeugung des Interface Identifiers beginnt damit, dass man das history value an den durch die Stateless Address Autoconfiguration erzeugten Interface Identifier anhängt.
+Hiervon wird nun der Message-Digest Algorithm 5 (MD5)-Hash erzeugt, welcher 128 Bit lang ist.
+Es ist jedoch auch möglich andere Hashingverfahren zu verwenden.
+Für den Interface Identifier werden die linken 64 Bit verwendet und das siebte Bit wird auf 0 gesetzt, um die Adresse als lokal zu setzen.
+Wie bei der Stateless Address Autoconfiguration werden auch hier die Adressen auf ihre Einzigartigkeit hin getestet.
+Falls der Interface Identifier in einem reservierten Bereich liegt oder schon verwendet wird, ist es nötig ihn erneut zu generieren.
+Dies geschieht unter Verwendung der rechten 64 Bit des zuvor errechneten MD5-Hashes als history value, welche an den Interface Identifier angehängt wird.
+Falls kein Konflikt vorherscht werden die rechten 64 Bit des Hashes als history value auf den persistenten Speicher geschrieben.
+
+Das Verfahren mit der Einbeziehung des statischen Interface Identifiers wird deshalb gewählt, damit es durch gleiche Zufallszahl-Generatoren nicht zu ständigen Konflikten kommt, falls zwei Geräte immer wieder die selben Zufallszahlen generieren.
+
+
+Die zweite Methode, welche bei der Absenz von Speicher zur Anwendung kommt, wird ähnlich vorgehen.
+Statt jedoch auf das history value zurückzugreifen, ist es nötig bei jeder neuen Generierung eines Interface Identifiers auch eine neue Zufallszahl zu generieren. 
+Danach kann das Verfahren wie aus der ersten Methode angewand werden.
+
+\section{Mögliche Verbesserungen der Privacy Extentions}
 
 \section{Fazit}
 \newpage
