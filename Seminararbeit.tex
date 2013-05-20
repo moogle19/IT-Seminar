@@ -217,9 +217,50 @@ Die zweite Methode, welche bei der Absenz von Speicher zur Anwendung kommt, wird
 Statt jedoch auf das history value zurückzugreifen, ist es nötig bei jeder neuen Generierung eines Interface Identifiers auch eine neue Zufallszahl zu generieren. 
 Danach kann das Verfahren wie aus der ersten Methode angewand werden.
 
-\section{Mögliche Verbesserungen der Privacy Extentions}
+\newpage
 
+\section{Mögliche Verbesserungen der Privacy Extentions}
+Die Privacy Extentions sind zwar eine enorme Verbesserung gegenüber dem Standartverfahren der Stateless Address Autoconfiguration, jedoch nicht ohne weiteres Verbesserungspotenzial.
+Da der Grad der Sicherheit beziehungsweise der Privatsphäre dort stark von dem Zeitintervall der Generierung eines neuen Interface Identifier abhängt.
+Ausserdem bleibt auch hier der Interface Identifier bei einem Wechsel in ein anderes Netzwerk und damit bei einem neuen Adresspräfix, konstant. 
+So lässt sich die Adresse immernoch ohne Probleme einem Client zuordnen. Dadurch wird ist es für mögliche Angreifer immernoch möglich ihn zu verfolgen und zuzuordnen.
+
+Ein möglicher Verbesserungsvorschlag wird in \cite{Paper} gemacht. Dort wird eine Einbeziehung des Präfixes in die Erzeugung von Interface Identifiern vorgeschlagen.
+Dadurch unterscheidet sich der Interface Identifiers eines Gerätes in verschiedenen Netzwerken, auch wenn sich die Ausgangszahl für die Generierung nicht verändert hat.
+
+In dem Paper wird der Interface Identifier anhand des Präfixes und einer Zufallszahl gebildet, statt die MAC-Adresse mit einzubeziehen.
+Dadurch wird die Sicherheit enorm erhöht.
+Der Generator für die Zufallszahlen sollte zudem kryptographisch sicher sein, damit die vorhergegangenen und nachfolgenden Wert nicht erraten werden können.
+Die Erzeugung des Interface Identifier erfolgt, wie bei den Privacy Extentions, über die Erstellung eines Hashes, diesmal jedoch über den Präfix und die Zufallszahl plus n.
+Das n ist hierbei ein Offset, welcher bei Systemstart oder Wechsel der Zufallszahl auf 0 gesetzt wird und um eins inkrementiert wird, falls eine Adresskolision vorliegt.
+Als Hashverfahren wird hier mindestens SHA-2, um die Berechnung der Zufallszahl bei Kenntnis der Adresse und des Präfixes zu vermeiden, da es deutlich schwerer zu knacken ist als MD5, welches bei den Privacy Extentions verwendet wird.
+
+Für die Festlegung des Intervalles, in welchem die Zufallszahl erzeugt wird, gibt es mehrere Möglichkeiten.
+Zum einen ist eine zeitabhängige Änderung wie bei den Privacy Extentions möglich.
+Hierbei ist jedoch die Wahl des Wertes entscheidet. So muss das Intervall so groß gewählt werden, dass die bestehenden Verbindungen nicht zu stark beeinträchtigt werden, da bei Wechsel des Interface Identifiers und dem damit verbundenen Wechsels der IP-Adresse, die bestehende Verbindung beendet wird.
+Das Interval sollte jedoch auch klein genug sein, um eine mögliche Zuordnung einer IP-Adresse zu einem Gerät zu machen.
+
+Eine andere Möglichkeit, welche dieses Problem umgeht, ist die Generierung der Zufallszahl, wenn sich das Gerät mit einem Netzwerk verbindet. Dies geschieht entweder beim Start des Gerätes oder bei einem Wechsel des Netzwerks. 
+Da bei einem Wechsel des Netzwerkes sowieso alle bestehenden Verbindungen beendet werden, gibt es keine Probleme durch zu schnell wechselnde Adressen.
+Ausserdem ist der Zeitraum, in dem eine neue Zufallszahl generiert wird klein genug, um einen ausreichenden Grad an Sicherheit zu gewährleisten.
+
+Eine ähnliche Lösung ist die Generierung der Zufallszahl bei jedem Systemneustart. Dadurch werden ebenfalls ungewollte Verbindungsabbrüche verhindert, die Sicherheit dieser Lösung ist jedoch stark von der Häufigkeit der Neustarts abhängig. 
+
+Eine Möglichkeit welche vorallem bei Firmennetzwerken intersessant ist, ist die Generierung der Zufallszahl bei der Installation des Betriebssystems. Dadurch bleibt der Interface Identifier in einem Netzwerk bei jeder Anmeldung gleich, wechselt man jedoch in eine anders Netzwerk, wird durch die Einbeziehung des Präfixes, ein anderer Interface Identifier verwendet. 
+Ein Tracking des Gerätes durch mehrere Netzwerke wird so zwar verhindet, eine IP-Adresse lässt sich denoch dem dazugehörigen Client im passenden Netzwerk zuordnen.
+
+Die letzte Möglichkeit ist die Generierung der Zufallszahl vom Nutzer anstoßen zu lassen. Dies umgeht ebenfalls das Risiko ungewollter Verbindugsabbrüche, kann jedoch auch zu Sichheitsrisiken führen, falls der Nutzer es nicht weiß oder vergisst.
+
+Daher empfehlen die Autoren, die Zufallszahl bei jeder neuen Verbidnung zu einem Netzwerk zu erzeugen, da dies den besten Kompromiss zwischen Nutzbarkeit und Sicherheit darstellt.
+
+
+\newpage
 \section{Fazit}
+Die Privacy Extentions sind ein guter Ansatz für die Verbesserung der Privatsphäre bei der Verwendung der Stateless Address Autoconfiguration, sind aber bei Weitem nicht perfekt.
+Da IPv6 noch ein vergleichsweise junges und wenig verbreitetes Protokoll ist, werden durch die steigende Nutzung und Verbreitung über die Zeit immer neue Schwachstellen und Angriffsmöglichkeiten aufgedeckt werden.
+Diese Fehler müssen dann behoben werden, wodurch das Protokoll verbessert wird und an Sicherheit gewinnt. Dieser Prozess wird wahrscheinlich noch einige Jahre brauchen.
+
+
 \newpage
 
 \section{Quellen}
